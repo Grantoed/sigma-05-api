@@ -15,7 +15,7 @@ class ServiceController implements Controller {
     private initialiseRoutes(): void {
         this.router.get(`${this.path}`, this.getAll);
         this.router.get(`${this.path}/:id`, this.getById);
-        this.router.get(`${this.path}/:category`, this.getByCategory);
+        this.router.get(`${this.path}/category/:category`, this.getByCategory);
     }
 
     private getAll = async (

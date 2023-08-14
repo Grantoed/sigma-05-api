@@ -7,7 +7,7 @@ class ProductService {
     private product = productModel;
 
     public async getCount(productCategory?: string): Promise<number> {
-        const query = productCategory ? { productCategory } : {};
+        const query = productCategory ? { category: productCategory } : {};
         const count = await this.product.countDocuments(query);
         return count;
     }
@@ -42,7 +42,7 @@ class ProductService {
         limit: number,
     ): Promise<Product[]> {
         const products = await this.product
-            .find({ productCategory })
+            .find({ category: productCategory })
             .skip((page - 1) * limit)
             .limit(limit);
         if (!products.length) {
