@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "outDir": "dist",
+        "strict": true,
+        "baseUrl": "./src",
+        "paths": {
+            "@/resources/*": ["resources/*"],
+            "@/utils/*": ["utils/*"],
+            "@/middleware/*": ["middleware/*"],
+            "@/helpers/*": ["helpers/*"]
+        },
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    }
+}
