@@ -26,9 +26,10 @@ class ServiceController implements Controller {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
-            const count = await this.ProductService.getCount();
+            const query = req.query.q as string;
+            const count = await this.ProductService.getCount({ searchQuery: query });
             const totalPages = Math.ceil(count / limit);
-            const products = await this.ProductService.getAll(page, limit);
+            const products = await this.ProductService.getAll(page, limit, query);
             res.status(200).json({ products, page, limit, count, totalPages });
         } catch (e: any) {
             next(new HttpException(e.status, e.message));
@@ -58,7 +59,7 @@ class ServiceController implements Controller {
             const { category: productCategory } = req.params;
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 3;
-            const count = await this.ProductService.getCount(productCategory);
+            const count = await this.ProductService.getCount({ productCategory });
             const totalPages = Math.ceil(count / limit);
             const products = await this.ProductService.getByCategory(productCategory, page, limit);
             res.status(200).json({ products, page, limit, count, totalPages });

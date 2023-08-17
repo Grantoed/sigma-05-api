@@ -3,12 +3,26 @@ import HttpException from '@/utils/exceptions/http.exception';
 import productModel from './product.model';
 import Product from './product.interface';
 
+type GetCountParams = {
+    searchQuery?: string;
+    productCategory?: string;
+};
+
 class ProductService {
     private product = productModel;
 
-    public async getCount(productCategory?: string): Promise<number> {
-        const query = productCategory ? { category: productCategory } : {};
-        const count = await this.product.countDocuments(query);
+    public async getCount({ searchQuery, productCategory }: GetCountParams): Promise<number> {
+        let filterQuery = {};
+        if (productCategory) {
+            filterQuery = { category: productCategory };
+        }
+        if (searchQuery) {
+            const regex = new RegExp(searchQuery, 'i');
+            filterQuery = {
+                $or: [{ name: regex }, { category: regex }],
+            };
+        }
+        const count = await this.product.countDocuments(filterQuery);
         return count;
     }
 
@@ -22,6 +36,7 @@ class ProductService {
         }
         const sets = await this.product
             .find(searchQuery)
+            .sort({ priceOld: -1 })
             .skip((page - 1) * limit)
             .limit(limit);
         return sets;
@@ -43,6 +58,7 @@ class ProductService {
     ): Promise<Product[]> {
         const products = await this.product
             .find({ category: productCategory })
+            .sort({ priceOld: -1 })
             .skip((page - 1) * limit)
             .limit(limit);
         if (!products.length) {
