@@ -3,7 +3,7 @@ import Controller from '@/utils/interfaces/controller.interface';
 import HttpException from '@/utils/exceptions/http.exception';
 import ProductService from '@/resources/product/product.service';
 
-class ServiceController implements Controller {
+class ProductController implements Controller {
     public path = '/products';
     public router = Router();
     private ProductService = new ProductService();
@@ -69,4 +69,4 @@ class ServiceController implements Controller {
     };
 }
 
-export default ServiceController;
+export default ProductController;
