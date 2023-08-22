@@ -11,15 +11,16 @@ const orderSchema = Joi.object({
             }),
         )
         .required(),
-    clientSchema: Joi.object({
+    client: Joi.object({
         fullName: Joi.string().required(),
         email: Joi.string().required(),
         address: Joi.string().required(),
         phoneNumber: Joi.alt().try(Joi.string(), Joi.number()).required(),
         message: Joi.string(),
     }),
-    totalPrice: Joi.number().required(),
-    totalDiscount: Joi.number().required(),
+    subtotal: Joi.number().required(),
+    discount: Joi.number().required(),
+    total: Joi.number().required(),
 });
 
 export default orderSchema;

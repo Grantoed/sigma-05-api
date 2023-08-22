@@ -15,6 +15,7 @@ export default interface Order extends Document {
         phoneNumber: string | number;
         message?: string;
     };
-    totalPrice: number;
-    totalDiscount: number;
+    subtotal: number;
+    total: number;
+    discount: number;
 }

@@ -44,11 +44,15 @@ const orderSchema = new Schema(
     {
         productsInCart: [productInCartSchema],
         client: clientSchema,
-        totalPrice: {
+        subtotal: {
             type: Number,
             required: true,
         },
-        totalDiscount: {
+        total: {
+            type: Number,
+            required: true,
+        },
+        discount: {
             type: Number,
             required: true,
         },

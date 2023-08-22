@@ -1,7 +1,8 @@
 import HttpException from '@/utils/exceptions/http.exception';
+import roundNumber from '@/utils/helpers/roundNumber';
 import orderModel from './order.model';
-import Order from './order.interface';
 import productModel from '../product/product.model';
+import Order from './order.interface';
 
 class ProductService {
     private order = orderModel;
@@ -10,8 +11,9 @@ class ProductService {
     public async submitOrder(
         productsInCart: Order['productsInCart'],
         client: Order['client'],
-        totalPrice: Order['totalPrice'],
-        totalDiscount: Order['totalDiscount'],
+        subtotal: Order['subtotal'],
+        discount: Order['discount'],
+        total: Order['total'],
     ): Promise<Order> {
         const productIds = productsInCart.map(product => product._id);
         const products = await this.product.find({
@@ -37,35 +39,34 @@ class ProductService {
             }
 
             if (dbProduct.price !== item.price) {
-                throw new HttpException(
-                    400,
-                    `Price mismatch for product with ID: ${item._id}. Expected ${dbProduct.price} but received ${item.price}.`,
-                );
+                throw new HttpException(400, `Price mismatch for product with ID: ${item._id}.`);
             }
 
+            const oldPrice = dbProduct.priceOld || dbProduct.price;
             calculatedTotalPrice += dbProduct.price * item.quantity;
-            calculatedTotalDiscount += (dbProduct.priceOld - dbProduct.price) * item.quantity;
+            calculatedTotalDiscount += (oldPrice - dbProduct.price) * item.quantity;
         }
 
-        if (totalPrice !== calculatedTotalPrice) {
+        if (roundNumber(total) !== roundNumber(calculatedTotalPrice)) {
             throw new HttpException(
                 400,
-                `Provided totalPrice does not match the expected total. Expected: ${calculatedTotalPrice}, received: ${totalPrice}.`,
+                `Provided total price does not match the expected. Expected: ${calculatedTotalPrice}, received: ${total}.`,
             );
         }
 
-        if (totalDiscount !== calculatedTotalDiscount) {
+        if (roundNumber(discount) !== roundNumber(calculatedTotalDiscount)) {
             throw new HttpException(
                 400,
-                `Provided totalDiscount does not match the expected discount. Expected: ${calculatedTotalDiscount}, received: ${totalDiscount}.`,
+                `Provided totalDiscount does not match the expected discount. Expected: ${calculatedTotalDiscount}, received: ${discount}.`,
             );
         }
 
         const order = await this.order.create({
             productsInCart,
             client,
-            totalPrice,
-            totalDiscount,
+            subtotal,
+            discount,
+            total,
         });
         return order;
     }

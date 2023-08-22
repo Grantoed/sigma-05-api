@@ -24,13 +24,15 @@ class OrderController implements Controller {
         next: NextFunction,
     ): Promise<Response | void> => {
         try {
-            const { productsInCart, client, totalPrice, totalDiscount } = req.body;
+            const { productsInCart, client, subtotal, total, discount } = req.body;
             const order = await this.OrderService.submitOrder(
                 productsInCart,
                 client,
-                totalPrice,
-                totalDiscount,
+                subtotal,
+                discount,
+                total,
             );
+
             res.status(200).json({ status: 'Order placed', order });
         } catch (e: any) {
             next(new HttpException(e.status, e.message));
