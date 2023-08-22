@@ -17,7 +17,6 @@ class ProductService {
         const products = await this.product.find({
             _id: { $in: productIds },
         });
-
         const productMap = new Map(products.map(product => [product._id.toString(), product]));
 
         let calculatedTotalPrice = 0;
@@ -28,6 +27,13 @@ class ProductService {
 
             if (!dbProduct) {
                 throw new HttpException(404, `Product with ID: ${item._id} not found.`);
+            }
+
+            if (dbProduct.inStock < item.quantity) {
+                throw new HttpException(
+                    400,
+                    `Can't order ${item.quantity} items of ${item.name}. Only ${dbProduct.inStock} of ${item.name} available`,
+                );
             }
 
             if (dbProduct.price !== item.price) {
