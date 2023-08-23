@@ -16,7 +16,7 @@ const orderSchema = Joi.object({
         email: Joi.string().required(),
         address: Joi.string().required(),
         phoneNumber: Joi.alt().try(Joi.string(), Joi.number()).required(),
-        message: Joi.string(),
+        message: Joi.string().allow('').optional(),
     }),
     subtotal: Joi.number().required(),
     discount: Joi.number().required(),
