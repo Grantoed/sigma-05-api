@@ -4,9 +4,22 @@ import orderModel from './order.model';
 import productModel from '../product/product.model';
 import Order from './order.interface';
 
-class ProductService {
+class OrderService {
     private order = orderModel;
     private product = productModel;
+
+    public async getCount(): Promise<number> {
+        const count = await this.order.countDocuments();
+        return count;
+    }
+
+    public async getOrders(page: number, limit: number): Promise<Order[] | []> {
+        const orders = await this.order
+            .find()
+            .skip((page - 1) * limit)
+            .limit(limit);
+        return orders;
+    }
 
     public async submitOrder(
         productsInCart: Order['productsInCart'],
@@ -72,4 +85,4 @@ class ProductService {
     }
 }
 
-export default ProductService;
+export default OrderService;

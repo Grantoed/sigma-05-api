@@ -15,8 +15,26 @@ class OrderController implements Controller {
     }
 
     private initialiseRoutes(): void {
+        this.router.get(`${this.path}`, this.getOrders);
         this.router.post(`${this.path}`, validationMiddleware(orderSchema), this.submitOrder);
     }
+
+    private getOrders = async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): Promise<Response | void> => {
+        try {
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const count = await this.OrderService.getCount();
+            const totalPages = Math.ceil(count / limit);
+            const orders = await this.OrderService.getOrders(page, limit);
+            res.status(200).json({ orders, page, limit, count, totalPages });
+        } catch (e: any) {
+            next(new HttpException(e.status, e.message));
+        }
+    };
 
     private submitOrder = async (
         req: Request,

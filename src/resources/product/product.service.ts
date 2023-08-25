@@ -34,12 +34,12 @@ class ProductService {
                 $or: [{ name: regex }, { category: regex }],
             };
         }
-        const sets = await this.product
+        const products = await this.product
             .find(searchQuery)
             .sort({ priceOld: -1 })
             .skip((page - 1) * limit)
             .limit(limit);
-        return sets;
+        return products;
     }
 
     public async getById(productId: string): Promise<Product> {
